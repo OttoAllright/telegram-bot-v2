@@ -1,0 +1,28 @@
+name: Notificador de Telegram
+
+on:
+  push:
+    branches: [ main ] # Se activa solo en pushes a la rama 'main'
+
+jobs:
+  send-notification:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 1. Clonar el repositorio
+        uses: actions/checkout@v3
+
+      - name: 2. Configurar Node.js v18
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: 3. Instalar dependencias
+        run: npm install
+
+      - name: 4. Enviar notificación a Telegram
+        env:
+          # Pasamos los secretos como variables de entorno al script
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: node ./scripts/notify-telegram.js
